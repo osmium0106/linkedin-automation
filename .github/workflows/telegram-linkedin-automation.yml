@@ -33,11 +33,10 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         
-    - name: Upload generated images
+    - name: Upload generated images (if any)
       uses: actions/upload-artifact@v4
       with:
         name: telegram-content-${{ github.run_number }}
-        path: |
-          generated_images/
+        path: generated_images/
         retention-days: 7
-      if: always()
+      if: always() && hashFiles('generated_images/**') != ''
