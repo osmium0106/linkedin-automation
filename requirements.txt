@@ -1,27 +1,10 @@
-# Core dependencies
+# Minimal requirements for Telegram LinkedIn automation
 requests>=2.28.0
-beautifulsoup4>=4.11.0
-feedparser>=6.0.0
 python-dotenv>=0.19.0
 
-# AI/ML dependencies (lighter versions for Docker)
-transformers>=4.20.0
-torch>=1.12.0
-diffusers>=0.15.0
-accelerate>=0.20.0
-Pillow>=9.0.0
+# RSS feeds and web scraping
+feedparser>=6.0.0
+beautifulsoup4>=4.12.0
 
-# LinkedIn API - using requests directly
-requests-oauthlib>=1.3.0
-
-# Scheduling and logging
-schedule>=1.1.0
-loguru>=0.6.0
-
-# Data handling
-pandas>=1.5.0
-numpy>=1.21.0
-
-# Additional utilities
-urllib3>=1.26.0
-certifi>=2022.0.0
+# Optional: For better date handling
+python-dateutil>=2.8.0

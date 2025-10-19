@@ -1,35 +1,66 @@
-"""
-LinkedIn Automation Bot - Main Script
-Orchestrates news fetching, content generation, and LinkedIn posting
+#!/usr/bin/env python3"""
+
+"""LinkedIn Automation Bot - Main Script
+
+Telegram LinkedIn Content AutomationOrchestrates news fetching, content generation, and LinkedIn posting
+
+Main entry point for the automation system."""
+
 """
 
 import os
-import sys
-import traceback
+
+import subprocessimport sys
+
+import sysimport traceback
+
 from datetime import datetime, timedelta
-from typing import Optional, Dict
-import schedule
-import time
-from loguru import logger
 
-# Import our custom modules
-from config import Config
-from news_fetcher import NewsFetcher
-from caption_generator import CaptionGenerator
-from image_generator import ImageGenerator
-from linkedin_content_manager import LinkedInContentManager
-from linkedin_poster import LinkedInPoster
-from auto_linkedin_poster import AutoLinkedInPoster, post_to_linkedin_auto
+def main():from typing import Optional, Dict
 
-class LinkedInBot:
-    def __init__(self):
-        """Initialize the LinkedIn automation bot"""
-        try:
-            # Load configuration
-            Config.validate_config()
+    """Run the Telegram automation script."""import schedule
+
+    try:import time
+
+        print("🤖 Starting Telegram LinkedIn Content Automation...")from loguru import logger
+
+        result = subprocess.run([sys.executable, "test_telegram_automation.py"], 
+
+                              capture_output=True, text=True)# Import our custom modules
+
+        from config import Config
+
+        if result.returncode == 0:from news_fetcher import NewsFetcher
+
+            print("✅ Automation completed successfully!")from caption_generator import CaptionGenerator
+
+            print(result.stdout)from image_generator import ImageGenerator
+
+        else:from linkedin_content_manager import LinkedInContentManager
+
+            print("❌ Automation failed!")from linkedin_poster import LinkedInPoster
+
+            print(result.stderr)from auto_linkedin_poster import AutoLinkedInPoster, post_to_linkedin_auto
+
+            return 1
+
+            class LinkedInBot:
+
+    except Exception as e:    def __init__(self):
+
+        print(f"❌ Error running automation: {e}")        """Initialize the LinkedIn automation bot"""
+
+        return 1        try:
+
+                # Load configuration
+
+    return 0            Config.validate_config()
+
             
-            # Initialize components
-            self.news_fetcher = NewsFetcher()
+
+if __name__ == "__main__":            # Initialize components
+
+    exit(main())            self.news_fetcher = NewsFetcher()
             self.caption_generator = CaptionGenerator()
             self.image_generator = ImageGenerator()
             self.content_manager = LinkedInContentManager()
