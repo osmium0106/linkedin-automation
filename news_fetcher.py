@@ -9,13 +9,11 @@ from bs4 import BeautifulSoup
 import random
 from typing import List, Dict
 from datetime import datetime
-from loguru import logger
-from config import Config
 
 class NewsFetcher:
     def __init__(self):
         self.base_url = "https://news.google.com/rss"
-        self.topics = Config.NEWS_TOPICS
+        self.topics = ['technology', 'artificial intelligence', 'AI', 'robotics', 'programming', 'business', 'startups']
         
     def get_google_news_rss(self, topic: str, num_articles: int = 5) -> List[Dict]:
         """
@@ -32,7 +30,7 @@ class NewsFetcher:
             # Construct RSS URL for the topic
             rss_url = f"{self.base_url}/search?q={topic}&hl=en-US&gl=US&ceid=US:en"
             
-            logger.info(f"Fetching news for topic: {topic}")
+            print(f"📰 Fetching news for topic: {topic}")
             
             # Parse RSS feed
             feed = feedparser.parse(rss_url)
@@ -49,11 +47,11 @@ class NewsFetcher:
                 }
                 articles.append(article)
                 
-            logger.success(f"Successfully fetched {len(articles)} articles for {topic}")
+            print(f"✅ Successfully fetched {len(articles)} articles for {topic}")
             return articles
             
         except Exception as e:
-            logger.error(f"Error fetching news for topic {topic}: {str(e)}")
+            print(f"❌ Error fetching news for topic {topic}: {str(e)}")
             return []
     
     def get_article_content(self, url: str) -> str:
@@ -91,7 +89,7 @@ class NewsFetcher:
             return text[:2000]  # Limit to 2000 characters
             
         except Exception as e:
-            logger.warning(f"Could not fetch full content for {url}: {str(e)}")
+            print(f"⚠️ Could not fetch full content for {url}: {str(e)}")
             return ""
     
     def get_trending_news(self, num_articles_per_topic: int = 3) -> List[Dict]:
@@ -109,8 +107,8 @@ class NewsFetcher:
         for topic in self.topics:
             articles = self.get_google_news_rss(topic, num_articles_per_topic)
             all_articles.extend(articles)
-        
-        logger.info(f"Total articles fetched: {len(all_articles)}")
+            
+        print(f"📊 Total articles fetched: {len(all_articles)}")
         return all_articles
     
     def select_random_article(self, articles: List[Dict] = None) -> Dict:
@@ -136,7 +134,7 @@ class NewsFetcher:
         if full_content:
             selected_article['full_content'] = full_content
         
-        logger.info(f"Selected article: {selected_article['title']}")
+        print(f"📰 Selected article: {selected_article['title']}")
         return selected_article
     
     def filter_articles_by_keywords(self, articles: List[Dict], keywords: List[str]) -> List[Dict]:
@@ -165,9 +163,6 @@ class NewsFetcher:
 
 # Example usage and testing
 if __name__ == "__main__":
-    # Configure logging
-    logger.add("logs/news_fetcher.log", rotation="1 day", retention="7 days")
-    
     # Initialize news fetcher
     news_fetcher = NewsFetcher()
     
@@ -175,11 +170,11 @@ if __name__ == "__main__":
     try:
         # Get trending news
         articles = news_fetcher.get_trending_news(num_articles_per_topic=2)
-        print(f"\\nFetched {len(articles)} total articles")
+        print(f"\nFetched {len(articles)} total articles")
         
         # Display first few articles
         for i, article in enumerate(articles[:5]):
-            print(f"\\n{i+1}. {article['title']}")
+            print(f"\n{i+1}. {article['title']}")
             print(f"   Source: {article['source']}")
             print(f"   Topic: {article['topic']}")
             print(f"   Description: {article['description'][:100]}...")
@@ -187,8 +182,7 @@ if __name__ == "__main__":
         # Select a random article
         if articles:
             random_article = news_fetcher.select_random_article(articles)
-            print(f"\\nSelected random article: {random_article['title']}")
+            print(f"\nSelected random article: {random_article['title']}")
             
     except Exception as e:
-        logger.error(f"Error in news fetcher test: {str(e)}")
-        print(f"Error: {str(e)}")
+        print(f"❌ Error in news fetcher test: {str(e)}")

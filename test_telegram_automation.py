@@ -121,15 +121,24 @@ def send_linkedin_content():
     bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
     chat_id = os.getenv('TELEGRAM_CHAT_ID')
     
-    # Generate fresh LinkedIn content
+    # Generate fresh LinkedIn content with image
     try:
         from news_fetcher import NewsFetcher
+        from news_image_generator import NewsImageGenerator
         
         news_fetcher = NewsFetcher()
-        articles = news_fetcher.fetch_tech_news()
+        image_generator = NewsImageGenerator()
+        articles = news_fetcher.get_trending_news()
         
         if articles:
             article = articles[0]  # Get the first article
+            
+            print(f"📰 Processing article: {article['title'][:50]}...")
+            
+            # Generate AI image for the news
+            print("🎨 Generating AI image for the news...")
+            image_path = image_generator.generate_news_image(article)
+            
             linkedin_content = f"""🚀 {article['title']}
 
 💡 Key takeaways:
@@ -145,8 +154,10 @@ What are your thoughts on this development? Share below! 👇
 📰 Source: {article['source']}
 🕒 Generated: {datetime.now().strftime('%H:%M %d-%m-%Y')}"""
             
-            image_info = {'url': article.get('image_url')} if article.get('image_url') else None
+            image_info = {'path': image_path} if image_path else None
             print(f"✅ Content generated from: {article['source']}")
+            if image_path:
+                print(f"🖼️ Image generated: {image_path}")
         else:
             raise Exception("No articles found")
         
@@ -170,20 +181,21 @@ Share your thoughts in the comments! 👇
         image_info = None
     
     # Create Telegram message
-    if image_info:
+    if image_info and image_info.get('path'):
+        filename = os.path.basename(image_info['path'])
         telegram_message = f"""🚀 Fresh LinkedIn Content + Image Ready!
 
 📝 COPY THIS TO LINKEDIN:
 {linkedin_content}
 
-📸 IMAGE AVAILABLE:
-• File: {image_info['filename']}
-• Size: {image_info['size_mb']} MB
-• GitHub: {image_info['github_url']}
+📸 IMAGE GENERATED:
+• File: {filename}
+• AI-generated image for this news topic
+• Sending image next...
 
 📱 POSTING STEPS:
-1. Copy text above
-2. Download image from GitHub
+1. Copy text above  
+2. Save the image I'm sending next
 3. Create LinkedIn post with text + image
 4. Engage with comments!
 
