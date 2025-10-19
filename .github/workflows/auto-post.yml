@@ -1,0 +1,68 @@
+name: LinkedIn Auto Post
+
+# This workflow runs your LinkedIn automation on schedule
+# It will automatically post content at specified times without any deployment
+
+on:
+  # Schedule automatic posting (times in UTC)
+  schedule:
+    # Morning post - 9:00 AM UTC (adjust for your timezone)
+    - cron: '0 9 * * *'
+    # Afternoon post - 2:00 PM UTC  
+    - cron: '0 14 * * *'
+    # Evening post - 6:00 PM UTC
+    - cron: '0 18 * * *'
+  
+  # Allow manual triggering for testing
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Run in test mode (generate content but dont post)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  auto-post:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Setup Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: 🔐 Configure Secrets
+      env:
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+        LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
+      run: |
+        echo "LINKEDIN_ACCESS_TOKEN=${LINKEDIN_ACCESS_TOKEN}" >> .env
+        echo "LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID}" >> .env
+        echo "LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET}" >> .env
+        echo "HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}" >> .env
+        echo "GITHUB_ACTIONS=true" >> .env
+    
+    - name: 🤖 Run LinkedIn Automation
+      run: python github_runner.py
+      
+    - name: 📊 Upload Execution Logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: linkedin-automation-logs
+        path: |
+          automation_log_*.json
+          linkedin_post_*.txt
+        retention-days: 30

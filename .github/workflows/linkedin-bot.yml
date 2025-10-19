@@ -1,0 +1,119 @@
+name: LinkedIn Automation Bot
+
+on:
+  # Schedule posts twice daily at 10 AM and 5 PM UTC
+  schedule:
+    - cron: '0 10 * * *'  # 10:00 AM UTC daily
+    - cron: '0 17 * * *'  # 5:00 PM UTC daily
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'post'
+        type: choice
+        options:
+          - post
+          - test
+          - generate
+
+# Prevent concurrent runs
+concurrency:
+  group: linkedin-automation
+  cancel-in-progress: false
+
+jobs:
+  linkedin-automation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: 📁 Create Directories
+      run: |
+        mkdir -p generated_images logs
+        
+    - name: 🔧 Set Environment Variables
+      env:
+        LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+        LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        LINKEDIN_REDIRECT_URI: ${{ secrets.LINKEDIN_REDIRECT_URI }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+      run: |
+        echo "Environment variables configured"
+        
+    - name: 🧪 Test Components (if manual test)
+      if: github.event.inputs.action == 'test'
+      env:
+        LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+        LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        LINKEDIN_REDIRECT_URI: ${{ secrets.LINKEDIN_REDIRECT_URI }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+      run: |
+        python main.py test
+        
+    - name: 🎨 Generate Content Only (if manual generate)
+      if: github.event.inputs.action == 'generate'
+      env:
+        LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+        LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        LINKEDIN_REDIRECT_URI: ${{ secrets.LINKEDIN_REDIRECT_URI }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+      run: |
+        python main.py generate
+        
+    - name: 📤 Create LinkedIn Post
+      if: github.event.inputs.action == 'post' || github.event_name == 'schedule'
+      env:
+        LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+        LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        LINKEDIN_REDIRECT_URI: ${{ secrets.LINKEDIN_REDIRECT_URI }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+      run: |
+        python main.py post
+        
+    - name: 📊 Upload Generated Images (for debugging)
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: generated-images-${{ github.run_number }}
+        path: generated_images/
+        retention-days: 7
+        
+    - name: 📋 Upload Logs
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: bot-logs-${{ github.run_number }}
+        path: logs/
+        retention-days: 14
+        
+    - name: 📢 Notify on Success
+      if: success()
+      run: |
+        echo "✅ LinkedIn automation completed successfully!"
+        
+    - name: 📢 Notify on Failure
+      if: failure()
+      run: |
+        echo "❌ LinkedIn automation failed!"
+        echo "Check the logs for more details."
