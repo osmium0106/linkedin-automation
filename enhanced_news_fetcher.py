@@ -129,36 +129,42 @@ class EnhancedNewsFetcher:
             genai.configure(api_key=self.gemini_api_key)
             model = genai.GenerativeModel('gemini-2.5-flash')  # Use available model
             
-            # Create enhanced prompt for Gemini with more context
+            # Create enhanced prompt for Gemini with maximum detail and context
             gemini_input = f"""
-You are a professional AI image prompt creator for LinkedIn business content. Based on this news article, create a detailed, visually compelling image prompt for AI image generation.
+You are a world-class AI image prompt engineer specializing in creating ultra-detailed, photorealistic prompts for professional business content. Based on this news article, create an extremely detailed, visually stunning image prompt for AI image generation.
 
 ARTICLE DETAILS:
 Title: {article['title']}
 Description: {article['description']}
 Topic Category: {article['topic']}
 
-CONTEXT ANALYSIS:
-- Analyze the main theme and key concepts from the title and description
-- Identify visual metaphors that represent the core message
-- Consider the business/professional audience on LinkedIn
+DEEP ANALYSIS REQUIRED:
+- Extract the core technological/business concept from the article
+- Identify specific visual elements that represent the innovation
+- Consider the professional LinkedIn business audience
+- Think about compelling visual metaphors and storytelling
 
-PROMPT REQUIREMENTS:
-1. Create a highly detailed, specific visual scene (not generic)
-2. Include specific visual elements, colors, lighting, and composition
-3. Focus on professional, modern, corporate aesthetic suitable for LinkedIn
-4. Use visual metaphors that clearly relate to the article content
-5. Specify camera angle, depth of field, and artistic style
-6. Make it engaging and visually striking
-7. Avoid mentioning specific companies, people, or brand names
-8. Include technical photography terms for better AI generation
-9. Target 150-200 words for maximum detail
-10. Make it unique and creative, not template-based
+ULTRA-DETAILED PROMPT REQUIREMENTS:
+1. **Scene Composition**: Describe exact camera angle, perspective, framing (wide-shot, close-up, etc.)
+2. **Visual Elements**: Specify exact objects, technology, interfaces, people (if relevant)
+3. **Lighting & Atmosphere**: Professional lighting setup, color temperature, mood, shadows
+4. **Color Palette**: Specific colors that enhance the business/tech theme
+5. **Technical Details**: Materials, textures, surfaces, reflections, depth of field
+6. **Professional Style**: Corporate photography, architectural photography, product photography style
+7. **Quality Specifications**: Ultra-high resolution, photorealistic, commercial grade
+8. **Emotional Impact**: Professional, inspiring, innovative, trustworthy feeling
+
+TECHNICAL SPECIFICATIONS:
+- Use photography terminology (bokeh, aperture, ISO, etc.)
+- Include specific artistic styles (minimalist, futuristic, corporate, etc.)
+- Mention exact materials (glass, steel, carbon fiber, etc.)
+- Specify lighting types (ambient, dramatic, soft-box, natural, etc.)
+- Add composition rules (rule of thirds, leading lines, etc.)
 
 OUTPUT FORMAT:
-Provide only the detailed image prompt, nothing else. Make it comprehensive and specific.
+Create a comprehensive 200-250 word prompt that reads like a professional photography brief. Be extremely specific and detailed. Make it unique to this exact news article content.
 
-Generate the detailed image prompt now:
+Generate the ultra-detailed image prompt now:
 """
             
             print("🤖 Generating creative prompt with Gemini AI...")
@@ -183,15 +189,21 @@ Generate the detailed image prompt now:
         title_words = article['title'].lower().split()
         description_words = article['description'].lower().split() if article['description'] else []
         
-        # Enhanced topic-based prompts with more detail
+        # Enhanced topic-based prompts with MAXIMUM detail
         topic_prompts = {
-            'ai': "Professional futuristic AI laboratory scene, multiple holographic neural network displays floating in air, interconnected data nodes with glowing blue pathways, sleek glass surfaces reflecting digital patterns, ambient blue and white lighting, ultra-modern corporate setting, depth of field, cinematic composition, high detail, professional photography style",
-            'artificial intelligence': "Advanced AI research facility interior, scientist analyzing complex machine learning algorithms on transparent displays, robotic arms working in background, digital brain visualization with flowing data streams, professional blue and silver color scheme, modern glass architecture, corporate technology aesthetic, 8k detail",
-            'robotics': "State-of-the-art robotics manufacturing floor, precision robotic arms assembling high-tech components, clean white and metallic environment, dramatic industrial lighting, sophisticated automation systems, modern factory setting, professional corporate photography, shallow depth of field focusing on robotic precision",
-            'technology': "Cutting-edge technology innovation center, multiple curved displays showing data analytics, sleek modern workstations, professionals collaborating on digital interfaces, ambient blue lighting, glass and steel architecture, corporate innovation theme, professional business photography",
-            'business': "Modern corporate boardroom with floor-to-ceiling windows overlooking city skyline, professional executives reviewing growth charts on large displays, ascending financial graphs, premium wood and glass furniture, natural lighting, success and achievement theme, corporate luxury aesthetic",
-            'startups': "Dynamic startup workspace with creative professionals brainstorming, whiteboards filled with innovative concepts, modern open office design, natural lighting, plants and modern furniture, collaboration and innovation theme, energetic and inspiring atmosphere, professional documentary style",
-            'programming': "Modern software development environment, multiple monitors displaying elegant code syntax, clean minimalist workspace, keyboard and mouse setup, ambient desk lighting, professional developer setup, blue and green accent lighting, high-tech productivity theme, corporate tech aesthetic"
+            'ai': "Ultra-modern AI research laboratory, cinematic wide-angle shot, pristine white and chrome surfaces reflecting ambient blue LED lighting, multiple holographic neural network displays floating in mid-air with intricate data pathways glowing in electric blue, sophisticated robotic arms visible in soft-focus background, professional scientists in crisp white lab coats analyzing data on transparent OLED displays, depth of field with sharp foreground focus on floating AI visualization, ambient lighting with subtle rim lighting, photorealistic commercial photography style, shot with 85mm lens at f/2.8, ultra-high resolution 8K detail, corporate innovation aesthetic",
+            
+            'artificial intelligence': "Dramatic low-angle shot of futuristic AI command center, floor-to-ceiling curved glass displays showing complex machine learning algorithms in real-time, professional data scientist silhouetted against bright analytical dashboards, ambient blue and white lighting creating professional atmosphere, sleek black and silver workstations with multiple curved monitors, holographic brain visualization center-frame with flowing data streams, depth of field focusing on AI interface, commercial architectural photography style, shot with 24-70mm lens, perfect corporate lighting, ultra-detailed 8K resolution, innovation and trust theme",
+            
+            'robotics': "High-end industrial photography of state-of-the-art robotics facility, precision robotic arms in synchronized motion assembling high-tech components, dramatic industrial lighting with warm amber accents against cool metallic surfaces, ultra-clean white and steel environment with sophisticated automation systems visible throughout, shallow depth of field focusing on robotic precision work, professional commercial photography style shot with macro lens, dramatic shadows and highlights, photorealistic detail showing mechanical precision, corporate manufacturing excellence theme, 8K ultra-high resolution",
+            
+            'technology': "Cutting-edge technology innovation center interior, dramatic architectural photography with soaring glass ceilings and natural lighting, multiple curved ultra-wide displays showing real-time data analytics, modern professionals collaborating around sleek touch interfaces, ambient blue accent lighting throughout space, minimalist white and glass furniture with chrome accents, depth of field with leading lines drawing eye to central collaboration area, shot with 16-35mm wide-angle lens, professional corporate photography style, ultra-high resolution detail, innovation and collaboration theme",
+            
+            'business': "Premium corporate boardroom with floor-to-ceiling windows overlooking metropolitan skyline at golden hour, executive team reviewing ascending financial growth charts on massive 4K displays, luxury mahogany conference table with integrated technology, dramatic natural lighting mixed with warm LED accents, professional business attire, depth of field focusing on success metrics, shot with 50mm lens at f/1.8, commercial corporate photography style, ultra-high resolution detail, success and achievement theme, photorealistic quality",
+            
+            'startups': "Dynamic startup innovation workspace, creative professionals brainstorming around digital whiteboards filled with colorful mind maps and growth charts, modern open-concept office with natural wood accents and living walls, abundant natural lighting through large windows, collaborative energy with laptops and tablets scattered creatively, depth of field focusing on innovation sketches, shot with 35mm lens, documentary-style corporate photography, vibrant yet professional color palette, ultra-detailed 8K resolution, entrepreneurial energy and creativity theme",
+            
+            'programming': "Ultra-modern software development environment, multiple curved 4K monitors displaying elegant syntax-highlighted code in dark theme, mechanical keyboard with RGB backlighting, sleek minimalist desk setup with premium peripherals, ambient LED strip lighting creating professional coding atmosphere, depth of field focusing on central monitor with code, shot with 85mm lens at f/2.0, tech photography style with dramatic lighting, photorealistic detail of development environment, professional productivity theme, 8K ultra-high resolution"
         }
         
         # Get base detailed prompt
@@ -222,8 +234,8 @@ Generate the detailed image prompt now:
                 base_prompt += enhancement
                 break
         
-        # Add final professional touches
-        final_prompt = f"{base_prompt}, professional LinkedIn corporate style, high resolution, photorealistic, commercial photography quality, trending on business photography, professional corporate aesthetic, clean composition"
+        # Add final professional touches with maximum quality specifications
+        final_prompt = f"{base_prompt}, professional LinkedIn corporate photography, ultra-high resolution 8K detail, photorealistic commercial quality, perfect lighting and composition, trending on professional photography portfolios, award-winning corporate photography style, shot with professional DSLR camera, perfect exposure and color grading, commercial advertising quality"
         
         return final_prompt
     

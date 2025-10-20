@@ -220,29 +220,29 @@ class NewsImageGenerator:
                 
             headers = {"Authorization": f"Bearer {token}"}
             
-            # FLUX.1-schnell specific parameters (optimized for maximum quality)
+            # FLUX.1-schnell specific parameters (optimized for MAXIMUM quality)
             payload = {
                 "inputs": prompt,
                 "parameters": {
-                    "num_inference_steps": 12,  # Increased from 8 for maximum quality
-                    "guidance_scale": 5.0,     # Higher for more detailed images
+                    "num_inference_steps": 20,  # Increased from 12 for maximum quality
+                    "guidance_scale": 7.0,     # Higher for much more detailed images
                     "width": 1024,
                     "height": 1024
                 }
             }
             
-            print(f"🎨 Generating high-quality AI image with FLUX.1-schnell...")
+            print(f"🎨 Generating MAXIMUM quality AI image with FLUX.1-schnell...")
             print(f"🔖 Prompt: {prompt[:80]}...")
-            print(f"⏳ Using 12 inference steps with extended processing time (60+ seconds for best quality)...")
+            print(f"⏳ Using 20 inference steps with EXTENDED processing time (120+ seconds for MAXIMUM quality)...")
             
-            # FLUX with extended time for maximum quality (1 minute+ timeout)
-            max_retries = 3  # Increased retries for better success rate
-            retry_delay = 25  # Longer delay between retries for better quality
+            # FLUX with MAXIMUM time for best possible quality (2+ minute timeout)
+            max_retries = 4  # More retries for better success rate
+            retry_delay = 35  # Much longer delay between retries for maximum quality
             
             for attempt in range(max_retries):
                 print(f"🔄 Attempt {attempt + 1}/{max_retries}...")
                 
-                response = requests.post(API_URL, headers=headers, json=payload, timeout=90)  # Extended timeout to 90 seconds
+                response = requests.post(API_URL, headers=headers, json=payload, timeout=150)  # Extended timeout to 2.5 minutes
                 
                 if response.status_code == 200:
                     content_type = response.headers.get('content-type', '')
@@ -254,8 +254,8 @@ class NewsImageGenerator:
                             
                             if 'loading' in error_msg.lower():
                                 estimated_time = error_data.get('estimated_time', retry_delay)
-                                print(f"⏳ FLUX model loading... waiting {estimated_time + 10} seconds for better quality")
-                                time.sleep(estimated_time + 15)  # Extended wait time for quality
+                                print(f"⏳ FLUX model loading... waiting {estimated_time + 20} seconds for MAXIMUM quality")
+                                time.sleep(estimated_time + 25)  # Extended wait time for maximum quality
                                 continue
                             else:
                                 print(f"❌ FLUX API Error: {error_msg}")
@@ -284,8 +284,8 @@ class NewsImageGenerator:
                             continue
                             
                 elif response.status_code == 503:
-                    print(f"🔄 FLUX model loading... waiting {retry_delay + 10} seconds for optimal generation")
-                    time.sleep(retry_delay + 15)  # Extended wait for better quality
+                    print(f"🔄 FLUX model loading... waiting {retry_delay + 20} seconds for MAXIMUM quality generation")
+                    time.sleep(retry_delay + 25)  # Extended wait for maximum quality
                     continue
                     
                 elif response.status_code == 401:

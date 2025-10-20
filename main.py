@@ -11,6 +11,13 @@ from datetime import datetime
 def main():
     """Run the enhanced LinkedIn content automation"""
     try:
+        # Load environment variables (works locally, GitHub Actions uses secrets)
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+        except ImportError:
+            pass  # dotenv not available in GitHub Actions, that's fine
+        
         print("🤖 Starting LinkedIn Content Automation")
         print("=" * 50)
         print(f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S IST')}")

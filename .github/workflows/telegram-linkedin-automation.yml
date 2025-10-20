@@ -27,6 +27,15 @@ jobs:
       run: |
         pip install requests feedparser python-dotenv Pillow google-generativeai beautifulsoup4
         
+    - name: Diagnose environment
+      run: |
+        python diagnose_env.py
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        
     - name: Generate and send LinkedIn content
       run: |
         python main.py
