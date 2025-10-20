@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import random
 from typing import List, Dict
 from datetime import datetime
+import urllib.parse
 
 class NewsFetcher:
     def __init__(self):
@@ -27,8 +28,10 @@ class NewsFetcher:
             List of article dictionaries with title, link, description, and published date
         """
         try:
+            import urllib.parse
+            encoded_topic = urllib.parse.quote_plus(topic)
             # Construct RSS URL for the topic
-            rss_url = f"{self.base_url}/search?q={topic}&hl=en-US&gl=US&ceid=US:en"
+            rss_url = f"{self.base_url}/search?q={encoded_topic}&hl=en-US&gl=US&ceid=US:en"
             
             print(f"📰 Fetching news for topic: {topic}")
             

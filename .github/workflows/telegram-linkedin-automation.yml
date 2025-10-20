@@ -1,16 +1,17 @@
-name: Telegram LinkedIn Automation
+name: Enhanced LinkedIn Automation
 
 on:
   schedule:
-    # Send 3 times daily to Telegram: 9 AM, 2 PM, 6 PM UTC (2:30 PM, 7:30 PM, 11:30 PM IST)
-    - cron: '0 9 * * *'   # 2:30 PM IST
-    - cron: '0 14 * * *'  # 7:30 PM IST  
-    - cron: '0 18 * * *'  # 11:30 PM IST
+    # Send 3 times daily to Telegram: 9 AM, 12 PM, 4 PM IST
+    # IST is UTC+5:30, so we need to subtract 5:30 from IST times
+    - cron: '30 3 * * *'   # 9:00 AM IST (3:30 AM UTC)
+    - cron: '30 6 * * *'   # 12:00 PM IST (6:30 AM UTC)  
+    - cron: '30 10 * * *'  # 4:00 PM IST (10:30 AM UTC)
   
   workflow_dispatch: # Allows manual triggering
 
 jobs:
-  telegram-automation:
+  linkedin-automation:
     runs-on: ubuntu-latest
     
     steps:
@@ -24,19 +25,21 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests feedparser python-dotenv
+        pip install requests feedparser python-dotenv Pillow google-generativeai beautifulsoup4
         
-    - name: Generate and send Telegram content
+    - name: Generate and send LinkedIn content
       run: |
-        python test_telegram_automation.py
+        python main.py
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         
-    - name: Upload generated images (if any)
+    - name: Upload generated images
       uses: actions/upload-artifact@v4
       with:
-        name: telegram-content-${{ github.run_number }}
+        name: linkedin-content-${{ github.run_number }}
         path: generated_images/
         retention-days: 7
       if: always() && hashFiles('generated_images/**') != ''
